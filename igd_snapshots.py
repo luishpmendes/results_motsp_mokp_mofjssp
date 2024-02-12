@@ -12,45 +12,73 @@ metrics_snapshots_df = pd.read_csv(metrics_snapshots_filename)
 # Set target values for each metric
 target_value = 0.50
 
-# Filter data for the Hypervolume Ratio
+# Filter data for the Modified Inverted Generational Distance
 igd_snapshots_df = metrics_snapshots_df[metrics_snapshots_df['metric name'] == 'Modified Inverted Generational Distance']
 
 # Initialize a dictionary to hold the cumulative distribution for each solver
 cumulative_distribution = {solver: [] for solver in solvers}
 
-# Get all unique time values from igd_snapshots_df
-time_values = igd_snapshots_df['snapshot time'].unique()
-time_values.sort()
+instances = igd_snapshots_df['instance'].unique()
+seeds = igd_snapshots_df['seed'].unique()
 
-num_instances = len(igd_snapshots_df['instance'].unique())
-num_seeds = len(igd_snapshots_df['seed'].unique())
+time_values = []
+igd_snapshots_of_solver_instance_seed: dict[str, dict[str, dict[int, pd.DataFrame]]] = {}
+for solver in solvers:
+    igd_snapshots_of_solver_instance_seed[solver] = {}
+    for instance in instances:
+        igd_snapshots_of_solver_instance_seed[solver][instance] = {}
+        for seed in seeds:
+            igd_snapshots_of_solver_instance_seed[solver][instance][seed] = igd_snapshots_df[(igd_snapshots_df['solver'] == solver) & (igd_snapshots_df['instance'] == instance) & (igd_snapshots_df['seed'] == seed)]
+            time_values_temp = igd_snapshots_of_solver_instance_seed[solver][instance][seed]['snapshot time'].unique()
+            if len(time_values) == 0 or time_values[0] < time_values_temp[0]:
+                time_values = time_values_temp
+
+igd_snapshots_of_solver_instance_seed_time: dict[str, dict[str, dict[int, dict[float, pd.DataFrame]]]] = {}
+for solver in solvers:
+    igd_snapshots_of_solver_instance_seed_time[solver] = {}
+    for instance in instances:
+        igd_snapshots_of_solver_instance_seed_time[solver][instance] = {}
+        for seed in seeds:
+            igd_snapshots_of_solver_instance_seed_time[solver][instance][seed] = {}
+            for time in time_values:
+                igd_snapshots_of_solver_instance_seed_time[solver][instance][seed][time] = igd_snapshots_of_solver_instance_seed[solver][instance][seed][igd_snapshots_of_solver_instance_seed[solver][instance][seed]['snapshot time'] <= time]
+                greatest_time = igd_snapshots_of_solver_instance_seed_time[solver][instance][seed][time]['snapshot time'].max()
+                igd_snapshots_of_solver_instance_seed_time[solver][instance][seed][time] = igd_snapshots_of_solver_instance_seed_time[solver][instance][seed][time][igd_snapshots_of_solver_instance_seed_time[solver][instance][seed][time]['snapshot time'] == greatest_time]
 
 # Calculate the cumulative distribution for each solver
 for solver in solvers:
     print(solver)
-    igd_snapshots_solver_df = igd_snapshots_df[igd_snapshots_df['solver'] == solver]
     for time in time_values:
-        # For each time, calculate the proportion of executions where the solver's performance is at least the target value
-        igd_snapshots_solver_time_df = igd_snapshots_solver_df[igd_snapshots_solver_df['snapshot time'] <= time]
-        percentage_meeting_target = 100 * np.mean(igd_snapshots_solver_time_df['metric value'] <= target_value) if len(igd_snapshots_solver_time_df) >= num_instances * num_seeds else 0
-        cumulative_distribution[solver].append(percentage_meeting_target)
+        num_meeting_target = 0.0
+        num_not_meeting_target = 0.0
+        for instance in instances:
+            for seed in seeds:
+                if not igd_snapshots_of_solver_instance_seed_time[solver][instance][seed][time].empty > 0:
+                    if igd_snapshots_of_solver_instance_seed_time[solver][instance][seed][time]["metric value"].values[0] <= target_value:
+                        num_meeting_target += 1
+                    else:
+                        num_not_meeting_target += 1
+        if num_meeting_target + num_not_meeting_target == len(instances) * len(seeds):
+            cumulative_distribution[solver].append(100 * (num_meeting_target / (num_meeting_target + num_not_meeting_target)))
+        else:
+            cumulative_distribution[solver].append(-1.0)
 
-num_any_zeros = 0
+num_any_negatives = 0
 while True:
-    any_zeros = False
+    any_negatives = False
     for solver in solvers:
-        if cumulative_distribution[solver][num_any_zeros] == 0:
-            any_zeros = True
+        if cumulative_distribution[solver][num_any_negatives] < 0:
+            any_negatives = True
             break
-    if any_zeros:
-        num_any_zeros += 1
+    if any_negatives:
+        num_any_negatives += 1
     else:
         break
 
 # Remove the first num_any_zeros elements from the cumulative distribution
-time_values = time_values[num_any_zeros:]
+time_values = time_values[num_any_negatives:]
 for solver in solvers:
-    cumulative_distribution[solver] = cumulative_distribution[solver][num_any_zeros:]
+    cumulative_distribution[solver] = cumulative_distribution[solver][num_any_negatives:]
 
 # Convert the cumulative distribution to a DataFrame for easier plotting
 cumulative_distribution_df = pd.DataFrame(cumulative_distribution, index=time_values)
@@ -60,7 +88,7 @@ cumulative_distribution_df.to_csv('igd_snapshots.csv')
 # Plot the performance profile
 plt.figure()
 for i in range(len(solvers)):
-    plt.plot(cumulative_distribution_df.index, cumulative_distribution_df[solvers[i]], label=solvers[i], marker = (i + 3, 2, 0), color = colors[i], alpha = 0.80, markevery = 0.02)
+    plt.plot(cumulative_distribution_df.index, cumulative_distribution_df[solvers[i]], label=solvers[i], marker = (i + 3, 2, 0), color = colors[i], alpha = 0.80)
 plt.title('Time-to-Target for Modified Inverted Generational Distance')
 plt.xlabel('Time')
 plt.ylabel('Percentage of Executions')
