@@ -10,7 +10,7 @@ metrics_snapshots_filename = 'metrics_snapshots.csv'
 metrics_snapshots_df = pd.read_csv(metrics_snapshots_filename)
 
 # Set target values for each metric
-target_value = 0.50
+target_value = 0.55
 
 # Filter data for the Hypervolume Ratio
 hvr_snapshots_df = metrics_snapshots_df[metrics_snapshots_df['metric name'] == 'Hypervolume Ratio']
