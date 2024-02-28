@@ -35,7 +35,7 @@ cumulative_distribution_df = pd.DataFrame(cumulative_distribution, index=rho_val
 
 cumulative_distribution_df.to_csv('hvr.csv')
 
-solvers = ["NSGA-II", "NSPSO", "MOEA/D-DE", "MHACO", "IHS", "NS-BRKGA", "NS-BRKGA + IPR"]
+solvers = ["NSGA-II", "NSPSO", "MOEA/D-DE", "MHACO", "IHS", "NS-BRKGA"]
 colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#8c7e6e", "#738191"]
 
 # Plot the performance profile
@@ -46,6 +46,6 @@ plt.title('Performance Profile for Hypervolume Ratio')
 plt.xlabel('Deviation from best Hypervolume Ratio')
 plt.ylabel('Percentage of Executions')
 plt.legend(loc='best')
-plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.5)
 # Save the plot
 plt.savefig('hvr.png')

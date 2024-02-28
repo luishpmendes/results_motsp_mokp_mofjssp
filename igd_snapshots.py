@@ -1,8 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 
-solvers = ["NSGA-II", "NSPSO", "MOEA/D-DE", "MHACO", "IHS", "NS-BRKGA", "NS-BRKGA + IPR"]
+solvers = ["NSGA-II", "NSPSO", "MOEA/D-DE", "MHACO", "IHS", "NS-BRKGA"]
 colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#8c7e6e", "#738191"]
 
 # Load the data
@@ -94,6 +93,6 @@ plt.xlabel('Time')
 plt.ylabel('Percentage of Executions')
 plt.xscale("log")
 plt.legend(loc='best')
-plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.5)
 # Save the plot
 plt.savefig('igd_snapshots.png')
