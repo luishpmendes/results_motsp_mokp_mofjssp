@@ -14,7 +14,7 @@ best_igd_per_instance = igd_df.groupby('instance')['metric value'].min()
 
 # Calculate the ratio of each solver's Modified Inverted Generational Distance to the best Modified Inverted Generational Distance
 igd_ratio = igd_df.copy()
-igd_ratio['metric value'] = igd_df.apply(lambda row: (row['metric value']+1) / (best_igd_per_instance[row['instance']]+1), axis=1) # TODO: confirmar com orientadores se esse "truque" é válido
+igd_ratio['metric value'] = igd_df.apply(lambda row: (row['metric value']) / (best_igd_per_instance[row['instance']]), axis=1)
 
 # Initialize a dictionary to hold the cumulative distribution for each solver
 cumulative_distribution = {solver: [] for solver in igd_ratio['solver'].unique()}
