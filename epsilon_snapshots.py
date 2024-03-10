@@ -9,7 +9,7 @@ metrics_snapshots_filename = 'metrics_snapshots.csv'
 metrics_snapshots_df = pd.read_csv(metrics_snapshots_filename)
 
 # Set target values for each metric
-target_value = 0.91
+target_value = 0.70
 
 # Filter data for the Multiplicative Epsilon Indicator
 epsilon_snapshots_df = metrics_snapshots_df[metrics_snapshots_df['metric name'] == 'Multiplicative Epsilon Indicator']
@@ -104,7 +104,7 @@ metrics_snapshots_filename = 'metrics_snapshots.csv'
 metrics_snapshots_df = pd.read_csv(metrics_snapshots_filename)
 
 # Set target values for each metric
-target_value = 0.95
+target_value = 0.90
 
 # Filter data for the Multiplicative Epsilon Indicator
 epsilon_snapshots_df = metrics_snapshots_df[metrics_snapshots_df['metric name'] == 'Multiplicative Epsilon Indicator']

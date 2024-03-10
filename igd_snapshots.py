@@ -9,7 +9,7 @@ metrics_snapshots_filename = 'metrics_snapshots.csv'
 metrics_snapshots_df = pd.read_csv(metrics_snapshots_filename)
 
 # Set target values for each metric
-target_value = 0.17
+target_value = 0.30
 
 # Filter data for the Modified Inverted Generational Distance
 igd_snapshots_df = metrics_snapshots_df[metrics_snapshots_df['metric name'] == 'Modified Inverted Generational Distance']
@@ -104,7 +104,7 @@ metrics_snapshots_filename = 'metrics_snapshots.csv'
 metrics_snapshots_df = pd.read_csv(metrics_snapshots_filename)
 
 # Set target values for each metric
-target_value = 0.04
+target_value = 0.10
 
 # Filter data for the Modified Inverted Generational Distance
 igd_snapshots_df = metrics_snapshots_df[metrics_snapshots_df['metric name'] == 'Modified Inverted Generational Distance']
