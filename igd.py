@@ -1,3 +1,5 @@
+from functools import partial
+from matplotlib.ticker import FormatStrFormatter
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,7 +29,7 @@ rho_values.sort()
 for solver in cumulative_distribution.keys():
     for rho in rho_values:
         # For each rho, calculate the proportion of executions where the solver's performance is within rho times the best performance
-        percentage_within_rho = 100 * np.mean(igd_ratio[igd_ratio['solver'] == solver]['metric value'] <= rho)
+        percentage_within_rho = np.mean(igd_ratio[igd_ratio['solver'] == solver]['metric value'] <= rho)
         cumulative_distribution[solver].append(percentage_within_rho)
 
 # Convert the cumulative distribution to a DataFrame for easier plotting
@@ -40,14 +42,18 @@ colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e3
 
 # Plot the performance profile
 plt.figure()
+plt.xlabel('Deviation from best Modified Inverted Generational Distance')
+plt.ylabel('Fraction of Executions')
+plt.grid(alpha=0.5, color='gray', linestyle='dashed', linewidth=0.5, which='both')
 for i in range(len(solvers)):
     plt.plot(cumulative_distribution_df.index, cumulative_distribution_df[solvers[i]], label=solvers[i], marker = (i + 3, 2, 0), color = colors[i], alpha = 0.80, markevery = 0.02)
-
-plt.title('Performance Profile for Modified Inverted Generational Distance')
-plt.xlabel('Deviation from best Modified Inverted Generational Distance')
-plt.ylabel('Percentage of Executions')
+plt.xscale("log")
+plt.yscale("function", functions=(partial(np.power, 10.0), np.log10))
 plt.legend(loc='best')
-plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.5)
-
+plt.gca().xaxis.set_minor_formatter(FormatStrFormatter('%d'))
+plt.gca().xaxis.set_major_formatter(FormatStrFormatter('%d'))
+plt.gca().yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+plt.tight_layout()
 # Save the plot
 plt.savefig('igd.png')
+plt.close()

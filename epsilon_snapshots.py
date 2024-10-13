@@ -1,3 +1,6 @@
+from functools import partial
+from matplotlib.ticker import FormatStrFormatter
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -58,7 +61,7 @@ for solver in solvers:
                     else:
                         num_not_meeting_target += 1
         if num_meeting_target + num_not_meeting_target == len(instances) * len(seeds):
-            cumulative_distribution[solver].append(100 * (num_meeting_target / (num_meeting_target + num_not_meeting_target)))
+            cumulative_distribution[solver].append(num_meeting_target / (num_meeting_target + num_not_meeting_target))
         else:
             cumulative_distribution[solver].append(-1.0)
 
@@ -86,17 +89,20 @@ cumulative_distribution_df.to_csv('epsilon_snapshots_easy.csv')
 
 # Plot the performance profile
 plt.figure()
+plt.xlabel('Time')
+plt.ylabel('Fraction of Executions')
+plt.grid(alpha=0.5, color='gray', linestyle='dashed', linewidth=0.5, which='both')
 for i in range(len(solvers)):
     plt.plot(cumulative_distribution_df.index, cumulative_distribution_df[solvers[i]], label=solvers[i], marker = (i + 3, 2, 0), color = colors[i], alpha = 0.80)
-plt.title('Time-to-Target for Multiplicative Epsilon Indicator')
-plt.xlabel('Time')
-plt.ylabel('Percentage of Executions')
 plt.xscale("log")
+plt.yscale("function", functions=(partial(np.power, 10.0), np.log10))
 plt.legend(loc='best')
-plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+plt.gca().xaxis.set_major_formatter(FormatStrFormatter('%d'))
+plt.gca().yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+plt.tight_layout()
 # Save the plot
 plt.savefig('epsilon_snapshots_easy.png')
-
+plt.close()
 
 
 # Load the data
@@ -153,7 +159,7 @@ for solver in solvers:
                     else:
                         num_not_meeting_target += 1
         if num_meeting_target + num_not_meeting_target == len(instances) * len(seeds):
-            cumulative_distribution[solver].append(100 * (num_meeting_target / (num_meeting_target + num_not_meeting_target)))
+            cumulative_distribution[solver].append(num_meeting_target / (num_meeting_target + num_not_meeting_target))
         else:
             cumulative_distribution[solver].append(-1.0)
 
@@ -181,13 +187,17 @@ cumulative_distribution_df.to_csv('epsilon_snapshots_hard.csv')
 
 # Plot the performance profile
 plt.figure()
+plt.xlabel('Time')
+plt.ylabel('Fraction of Executions')
+plt.grid(alpha=0.5, color='gray', linestyle='dashed', linewidth=0.5, which='both')
 for i in range(len(solvers)):
     plt.plot(cumulative_distribution_df.index, cumulative_distribution_df[solvers[i]], label=solvers[i], marker = (i + 3, 2, 0), color = colors[i], alpha = 0.80)
-plt.title('Time-to-Target for Multiplicative Epsilon Indicator')
-plt.xlabel('Time')
-plt.ylabel('Percentage of Executions')
 plt.xscale("log")
+plt.yscale("function", functions=(partial(np.power, 10.0), np.log10))
 plt.legend(loc='best')
-plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+plt.gca().xaxis.set_major_formatter(FormatStrFormatter('%d'))
+plt.gca().yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+plt.tight_layout()
 # Save the plot
 plt.savefig('epsilon_snapshots_hard.png')
+plt.close()
