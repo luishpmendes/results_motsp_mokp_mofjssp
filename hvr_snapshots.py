@@ -1,8 +1,8 @@
 from functools import partial
 from matplotlib.ticker import FormatStrFormatter
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 solvers = ["NSGA-II", "NSPSO", "MOEA/D-DE", "MHACO", "IHS", "NS-BRKGA"]
 colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#8c7e6e", "#738191"]
@@ -11,7 +11,7 @@ colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e3
 metrics_snapshots_filename = 'metrics_snapshots.csv'
 metrics_snapshots_df = pd.read_csv(metrics_snapshots_filename)
 
-# Set target values for each metric
+# Set target value for metric
 target_value = 0.60
 
 # Filter data for the Hypervolume Ratio

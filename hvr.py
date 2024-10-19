@@ -1,8 +1,11 @@
 from functools import partial
 from matplotlib.ticker import FormatStrFormatter
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+
+solvers = ["NSGA-II", "NSPSO", "MOEA/D-DE", "MHACO", "IHS", "NS-BRKGA"]
+colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#8c7e6e", "#738191"]
 
 # Load the data
 metrics_filename = 'metrics.csv'
@@ -36,9 +39,6 @@ for solver in cumulative_distribution.keys():
 cumulative_distribution_df = pd.DataFrame(cumulative_distribution, index=rho_values)
 
 cumulative_distribution_df.to_csv('hvr.csv')
-
-solvers = ["NSGA-II", "NSPSO", "MOEA/D-DE", "MHACO", "IHS", "NS-BRKGA"]
-colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#8c7e6e", "#738191"]
 
 # Plot the performance profile
 plt.figure()
